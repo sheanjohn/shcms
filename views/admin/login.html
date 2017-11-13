@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title><%=sh_name%></title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+		<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+ 
+		<!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+		<script src="https://cdn.bootcss.com/popper.js/1.12.5/umd/popper.min.js"></script>
+ 
+		<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+		<script src="https://cdn.bootcss.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+		
+		<!-- 视觉差 -->
+		<script src="/public/parallax/scripts/parallax.js"></script>
+		
+		<!-- session -->
+		<script src="/public/jquery-session.js"></script>
+		
+		<!-- 新 Bootstrap4 核心 CSS 文件 -->
+		<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/public/font-awesome/css/font-awesome.min.css">
+		
+		
+		<!-- 制定CSS -->
+		<link rel="stylesheet" href="/public/style.css">
+	</head>
+<body>
+	<script>
+		/**
+		文档开始
+		*/
+		$(document).ready(function(){
+		    $('[data-toggle="tooltip"]').tooltip(); 
+		});
+		
+		/*获取页面可见区域高度*/
+		function getHeight(){
+			return $(window).height();
+		}
+	</script>
+	<div id="scene" class="scene" style="position:fixed; z-index: -9; top: -50px; left: -50px;">
+		<img class="layer" data-depth="0.5" src="/public/photos/bkgs/bkgb.jpg">
+	</div>
+	<!-- 顶栏 -->
+	<nav class="navbar navbar-expand-sm bg-dark  navbar-dark fixed-top">
+	  <!-- Brand -->
+	  <a class="navbar-brand" href="javascript:;"><%=sh_name%></a>
+	
+	  <!-- Links -->
+	  <ul class="navbar-nav">
+	    <li class="nav-item">
+	      <a class="nav-link" href="/" data-toggle="tooltip" title="返回首页"><i class="fa fa-home fa-lg"></i></a>
+	    </li>
+	  </ul>
+	</nav>
+	<!--占位-->
+	<div style="height: 100px;">&nbsp;</div>
+	<!--welcome-->
+	<!--12 2,10-->
+	<div class="col-md-12" style=" text-align: center;">
+		<div id="searchbox" class="col-md-3 col-center-block margin15" style="min-height: 135px; display: none;">
+			<h1 style=" display:block; float:left;">请登陆</h1>
+			<div class="clearfix"></div>
+			<div class="form-group" style="text-align:left;">
+				<label for="uname">账户：</label>
+				<input type="text" id="uname" class="form-control" />
+			</div>
+			<div class="form-group" style="text-align:left;">
+				<label for="uname">密码：</label>
+				<input type="password" id="upswd" class="form-control" />
+			</div>
+				
+				<div style="padding:5px; font-size:20px; text-align: center; padding-top:60px;">
+					<button id="btn_enter" type="button" class="btn btn-lg btn-dark" style="cursor:pointer; width:220px;" data-toggle="tooltip" title="点击尝试发送登陆请求...">
+						<i class="fa fa-user-circle"></i> 登陆
+					</button>
+					<div class="clearfix"></div>
+				</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			var scene = document.getElementById('scene');
+			var parallax = new Parallax(scene);
+			parallax.calibrate(true);
+			parallax.invert(true);
+			parallax.limit(true);
+			parallax.scalar(1.8);
+			parallax.friction(1.8);
+			
+			var pageH=getHeight();
+			$("#searchbox").height(pageH-600);
+			$("#searchbox").css('top',pageH/2-300+'px');
+			$("#searchbox").fadeIn(2500);
+		});
+		//enter按钮
+		$("#btn_enter").click(function(){
+			var uname=$("#uname").val();
+			var upswd=$("#upswd").val();
+			$.post(
+					'/admin/login',
+					{
+						uname:uname,
+						upswd:upswd
+					},
+					function(data){
+						if(data=='false'){
+							alert('登陆失败');
+						}else{
+							var u = JSON.parse(data);
+							$.session.set('uname', u.uname);
+							$.session.set('ulevel', u.level);
+							window.location.href='/admin/ds';
+						}
+					})
+		})
+	</script>
+</body>
+</html>
